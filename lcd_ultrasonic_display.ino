@@ -4,6 +4,7 @@
 // Pins for HC SR04
 const int TRIG_PIN = 9;
 const int ECHO_PIN = 10;
+const int BUZZ_PIN = 8;
 
 // Initialize the LCD. 
 LiquidCrystal_I2C lcd(0x27, 16, 2);
@@ -14,6 +15,7 @@ void setup() {
   // Configure sensor pins
   pinMode(TRIG_PIN, OUTPUT);
   pinMode(ECHO_PIN, INPUT);
+  pinMode(BUZZ_PIN, OUTPUT);
 
   // Initialize the LCD screen
   lcd.init();
@@ -24,6 +26,7 @@ void setup() {
   lcd.print("Distance Meter");
   delay(2000);
   lcd.clear();
+  digitalWrite(BUZZ_PIN, HIGH);
 }
 
 void loop() {
@@ -54,6 +57,13 @@ void loop() {
   } else {
     lcd.print(distance);
     lcd.print("cm ");
+  }
+
+  //Buzzer Activation
+  if (distance < 5){
+    digitalWrite(BUZZ_PIN, LOW);
+  }else{
+    digitalWrite(BUZZ_PIN, HIGH);
   }
 
   // Serial Monitor print for debugging
