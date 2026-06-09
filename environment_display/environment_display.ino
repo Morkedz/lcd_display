@@ -4,7 +4,6 @@
 #include <LiquidCrystal_I2C.h>
 
 //read using bme280
-
 Adafruit_BME280 bme(0x76);
 LiquidCrystal_I2C lcd(0x27, 16, 2);
 const int BUZZ_PIN = 8;
@@ -18,6 +17,12 @@ void setup() {
   lcd.init();
   lcd.backlight();
 
+  if (!bme.begin(0x76)) {
+    Serial.println("Could not find a valid BME280 sensor, check wiring!");
+    lcd.print("BME280 Error");
+    while (1); // Halt the program if sensor isn't found
+  }
+
   // Welcome Message
   lcd.setCursor(0, 0);
   lcd.print("Temperature Read");
@@ -29,10 +34,19 @@ void setup() {
 
 void loop() {
   // put your main code here, to run repeatedly:
-  int temperature = bme.readTemperature();
-  int pressure = bme.readPressure();
+  int temperature = int(bme.readTemperature());
+  int pressure = int(bme.readPressure());
+
   Serial.println("Temperature Reading: " + temperature);
   Serial.println("Pressure Reading: " + pressure);
+  lcd.print(temperature);
+  lcd.print(pressure);
+  // condition for beep
+  if(temperature > 32 || temperature < 0){
+    digitalWrite(BUZZ_PIN, LOW);
+  }else{
+    digitalWrite(BUZZ_PIN, HIGH);
+  }
   delay(500);
   
 }
