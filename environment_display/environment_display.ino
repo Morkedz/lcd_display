@@ -1,11 +1,11 @@
 #include <Wire.h>
-#include <Adafruit_BME280.h>
 #include <Adafruit_Sensor.h>
 #include <LiquidCrystal_I2C.h>
+#include <Adafruit_BMP280.h>
 
 //read using bme280
-Adafruit_BME280 bme(0x76);
 LiquidCrystal_I2C lcd(0x27, 16, 2);
+Adafruit_BMP280 bme;
 const int BUZZ_PIN = 8;
 
 void setup() {
@@ -16,11 +16,9 @@ void setup() {
 
   lcd.init();
   lcd.backlight();
-
-  if (!bme.begin(0x76)) {
+  if (!bme.begin(0x77)) {
     Serial.println("Could not find a valid BME280 sensor, check wiring!");
-    lcd.print("BME280 Error");
-    while (1); // Halt the program if sensor isn't found
+    lcd.print("BMP280 Error");
   }
 
   // Welcome Message
@@ -37,8 +35,10 @@ void loop() {
   int temperature = int(bme.readTemperature());
   int pressure = int(bme.readPressure());
 
-  Serial.println("Temperature Reading: " + temperature);
-  Serial.println("Pressure Reading: " + pressure);
+  Serial.print("Temperature Reading: ");
+  Serial.println(temperature);
+  Serial.print("Pressure Reading:");
+  Serial.println(pressure);
   lcd.print(temperature);
   lcd.print(pressure);
   // condition for beep
